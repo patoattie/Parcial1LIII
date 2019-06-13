@@ -65,17 +65,12 @@ function traerPersonajes()
                 crearTabla();
                 crearFormulario();
 
-                //document.getElementById("btnGetPersonajes").removeAttribute("disabled");
-                //document.getElementById("btnAltaPersonaje").removeAttribute("disabled");
                 document.getElementById("btnGetPersonajes").style.pointerEvents = "auto";
                 document.getElementById("btnAltaPersonaje").style.pointerEvents = "auto";
             }
         }
         else
         {
-            //document.getElementById("btnGetPersonajes").setAttribute("disabled", "");
-            //document.getElementById("btnAltaPersonaje").setAttribute("disabled", "");
-            //document.getElementById("btnEditarPersonaje").setAttribute("disabled", "");
             document.getElementById("btnGetPersonajes").style.pointerEvents = "none";
             document.getElementById("btnAltaPersonaje").style.pointerEvents = "none";
             document.getElementById("btnEditarPersonaje").style.pointerEvents = "none";
@@ -130,7 +125,7 @@ function personajeEditado()
 function agregarPersonaje(personaje)
 {
     var xhr = new XMLHttpRequest();
-    var nuevaPersona = [];
+    var nuevoPersonaje = [];
     var spinner = crearSpinner();
 
     xhr.onreadystatechange = function()
@@ -140,9 +135,9 @@ function agregarPersonaje(personaje)
             if (this.status == 200)
             {
                 info.removeChild(spinner);
-                nuevaPersona.push(JSON.parse(xhr.responseText));
+                nuevoPersonaje.push(JSON.parse(xhr.responseText));
                 ocultarFormulario();
-                crearDetalle(document.getElementById("tablaPersonajes"), nuevaPersona);
+                crearDetalle(document.getElementById("tablaPersonajes"), nuevoPersonaje);
             }
             else
             {
@@ -287,7 +282,18 @@ function personajeToString(personaje)
             retornoCarro = true;
         }
 
-        texto += atributo.toUpperCase() + ": " + personaje[atributo];
+        if(atributo == "traidor" && personaje[atributo])
+        {
+            texto += atributo.toUpperCase() + ": Si";
+        }
+        else if(atributo == "traidor" && !personaje[atributo])
+        {
+            texto += atributo.toUpperCase() + ": No";
+        }
+        else
+        {
+            texto += atributo.toUpperCase() + ": " + personaje[atributo];
+        }
     }
 
     return texto;
@@ -517,7 +523,14 @@ function seleccionarFila()
     //Recorro las columnas de la fila seleccionada, guardando un atributo por columna en personajeSeleccionado.
     for(var i = 0; i < this.childNodes.length; i++)
     {
-        personajeSeleccionado[this.childNodes[i].getAttribute("class")] = this.childNodes[i].textContent;
+        if(this.childNodes[i].getAttribute("class") == "traidor")
+        {
+            personajeSeleccionado[this.childNodes[i].getAttribute("class")] = (this.childNodes[i].textContent == "Si");
+        }
+        else
+        {
+            personajeSeleccionado[this.childNodes[i].getAttribute("class")] = this.childNodes[i].textContent;
+        }
     }
 }
 
@@ -550,7 +563,21 @@ function modificarFilaSeleccionada(datos)
     //Recorro las columnas de la fila seleccionada, guardando un atributo por columna en personajeSeleccionado.
     for(var i = 0; i < filaSeleccionada.childNodes.length; i++)
     {
-        filaSeleccionada.childNodes[i].textContent = datos[filaSeleccionada.childNodes[i].getAttribute("class")];
+        if(filaSeleccionada.childNodes[i].getAttribute("class") == "traidor")
+        {
+            if(datos[filaSeleccionada.childNodes[i].getAttribute("class")])
+            {
+                filaSeleccionada.childNodes[i].textContent = "Si";
+            }
+            else
+            {
+                filaSeleccionada.childNodes[i].textContent = "No";
+            }
+        }
+        else
+        {
+            filaSeleccionada.childNodes[i].textContent = datos[filaSeleccionada.childNodes[i].getAttribute("class")];
+        }
     }
 }
 
@@ -560,8 +587,6 @@ function altaPersonaje()
 {
     activarMenu(document.getElementById("btnAltaPersonaje"));
 
-    //document.getElementById("btnAltaPersonaje").setAttribute("disabled", "");
-    //document.getElementById("btnEditarPersonaje").setAttribute("disabled", "");
     document.getElementById("btnAltaPersonaje").style.pointerEvents = "none";
     document.getElementById("btnEditarPersonaje").style.pointerEvents = "none";
 
@@ -577,8 +602,6 @@ function editarPersonaje()
 {
     activarMenu(document.getElementById("btnEditarPersonaje"));
 
-    //document.getElementById("btnAltaPersonaje").setAttribute("disabled", "");
-    //document.getElementById("btnEditarPersonaje").setAttribute("disabled", "");
     document.getElementById("btnAltaPersonaje").style.pointerEvents = "none";
     document.getElementById("btnEditarPersonaje").style.pointerEvents = "none";
 
@@ -627,17 +650,11 @@ function mostrarFormulario()
                     {
                         if(casas[i] == datos[atributo])
                         {
-                            if(!document.getElementById("opt" + casas[i]).hasAttribute("checked"))
-                            {
-                                document.getElementById("opt" + casas[i]).setAttribute("checked", "");
-                            }
+                            document.getElementById("opt" + casas[i]).checked = true;
                         }
                         else
                         {
-                            if(document.getElementById("opt" + casas[i]).hasAttribute("checked"))
-                            {
-                                document.getElementById("opt" + casas[i]).removeAttribute("checked");
-                            }
+                            document.getElementById("opt" + casas[i]).checked = false;
                         }
                     }
                 }
@@ -647,17 +664,11 @@ function mostrarFormulario()
                     {
                         if(i == 0)
                         {
-                            if(!document.getElementById("opt" + casas[i]).hasAttribute("checked"))
-                            {
-                                document.getElementById("opt" + casas[i]).setAttribute("checked", "");
-                            }
+                            document.getElementById("opt" + casas[i]).checked = true;
                         }
                         else
                         {
-                            if(document.getElementById("opt" + casas[i]).hasAttribute("checked"))
-                            {
-                                document.getElementById("opt" + casas[i]).removeAttribute("checked");
-                            }
+                            document.getElementById("opt" + casas[i]).checked = false;
                         }
                     }
                 }
@@ -666,7 +677,7 @@ function mostrarFormulario()
                 case "traidor":
                     if(typeof datos == "object")
                     {
-                        document.getElementById("chkTraidor").checked = (datos[atributo] == "Si");
+                        document.getElementById("chkTraidor").checked = datos[atributo];
                     }
                     else
                     {
@@ -694,8 +705,6 @@ function ocultarFormulario()
 {
     activarMenu(document.getElementById("btnGetPersonajes"));
 
-    //document.getElementById("btnAltaPersonaje").removeAttribute("disabled");
-    //document.getElementById("btnEditarPersonaje").setAttribute("disabled", "");
     document.getElementById("btnAltaPersonaje").style.pointerEvents = "auto";
     document.getElementById("btnEditarPersonaje").style.pointerEvents = "none";
 
