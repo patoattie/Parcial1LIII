@@ -101,8 +101,26 @@ function personajeEditado()
 
     for(var atributo in personajes[0])
     {
-        var atributoCapitalizado = atributo.charAt(0).toUpperCase() + atributo.slice(1).toLowerCase(); //Primer letra en mayuscula, resto minuscula
-        personaje[atributo] = document.getElementById("txt" + atributoCapitalizado).value;
+        switch(atributo)
+        {
+            case "casa":
+                for(var i = 0; i < casas.length; i++)
+                {
+                    if(document.getElementById("opt" + casas[i]).checked)
+                    {
+                        personaje["casa"] = casas[i];
+                    }
+                }
+                break;
+            case "traidor":
+                personaje["traidor"] = document.getElementById("chkTraidor").checked;
+                break;
+            default:
+                var atributoCapitalizado = atributo.charAt(0).toUpperCase() + atributo.slice(1).toLowerCase(); //Primer letra en mayuscula, resto minuscula
+                personaje[atributo] = document.getElementById("txt" + atributoCapitalizado).value;
+
+                break;
+        }
     }
 
     return personaje;
@@ -152,7 +170,7 @@ function opcionBorrarPersonaje()
     borrarPersonaje(personajeSeleccionado);
 }
 
-//Llama a la función bajaPersona del servidor, pasándole el objeto que se quiere eliminar por parámetro.
+//Llama a la función bajaPersonaje del servidor, pasándole el objeto que se quiere eliminar por parámetro.
 function borrarPersonaje(personaje)
 {
     var xhr = new XMLHttpRequest();
@@ -169,7 +187,7 @@ function borrarPersonaje(personaje)
 
                 if(respuesta.todoOk === 1)
                 {
-                    alert("Personaje:\n\n" + personaToString(personaje) + "\n\nfue borrada de la tabla");
+                    alert("Personaje:\n\n" + personajeToString(personaje) + "\n\nfue borrada de la tabla");
                     borrarFilaSeleccionada(document.getElementById("tablaPersonajes"));
                 }
                 else
@@ -192,7 +210,7 @@ function borrarPersonaje(personaje)
 
     };
 
-    xhr.open('POST', 'http://localhost:3000/bajaPersona', true); //abre la conexion( metodo , URL, que sea asincronico y no se quede esperando el retorno)
+    xhr.open('POST', 'http://localhost:3000/bajaPersonaje', true); //abre la conexion( metodo , URL, que sea asincronico y no se quede esperando el retorno)
     xhr.setRequestHeader('Content-type', 'application/json');
     xhr.send(JSON.stringify(personaje));
 
@@ -222,7 +240,7 @@ function modificarPersonaje(personaPre, personaPost)
 
                 if(respuesta.todoOk === 1)
                 {
-                    alert("Personaje:\n\n" + personaToString(personaPre) + "\n\nfue modificada a:\n\n" + personaToString(personaPost));
+                    alert("Personaje:\n\n" + personajeToString(personaPre) + "\n\nfue modificada a:\n\n" + personajeToString(personaPost));
                     modificarFilaSeleccionada(personaPost);
                 }
                 else
@@ -253,7 +271,7 @@ function modificarPersonaje(personaPre, personaPost)
 }
 
 //Devuelve un string con la descripción de atributos y valores del objeto pasado por parámetro.
-function personaToString(personaje)
+function personajeToString(personaje)
 {
     var texto = "";
     var retornoCarro = false;
@@ -463,7 +481,23 @@ function crearDetalle(tablaPersonajes, datos)
         {
             columna = document.createElement("td");
             columna.setAttribute("class", atributo);
-            columna.textContent = datos[i][atributo];
+
+            if(atributo == "traidor")
+            {
+                if(datos[i][atributo])
+                {
+                    columna.textContent = "Si";
+                }
+                else
+                {
+                    columna.textContent = "No";
+                }
+            }
+            else
+            {
+                columna.textContent = datos[i][atributo];
+            }
+
             filaDetalle.appendChild(columna);
         }
     }
@@ -584,25 +618,72 @@ function mostrarFormulario()
     {
         var atributoCapitalizado = atributo.charAt(0).toUpperCase() + atributo.slice(1).toLowerCase(); //Primer letra en mayuscula, resto minuscula
 
-        if(typeof datos == "object")
+        switch(atributo)
         {
-            document.getElementById("txt" + atributoCapitalizado).value = datos[atributo];
-        }
-        else
-        {
-            switch(atributo)
-            {
-                case "casa":
-                    document.getElementById("opt" + casas[0]).setAttribute("checked", "");
-                    break;
-
+            case "casa":
+                if(typeof datos == "object") //Modificar o Borrar
+                {
+                    for(var i = 0; i < casas.length; i++)
+                    {
+                        if(casas[i] == datos[atributo])
+                        {
+                            if(!document.getElementById("opt" + casas[i]).hasAttribute("checked"))
+                            {
+                                document.getElementById("opt" + casas[i]).setAttribute("checked", "");
+                            }
+                        }
+                        else
+                        {
+                            if(document.getElementById("opt" + casas[i]).hasAttribute("checked"))
+                            {
+                                document.getElementById("opt" + casas[i]).removeAttribute("checked");
+                            }
+                        }
+                    }
+                }
+                else //Agregar
+                {
+                    for(var i = 0; i < casas.length; i++)
+                    {
+                        if(i == 0)
+                        {
+                            if(!document.getElementById("opt" + casas[i]).hasAttribute("checked"))
+                            {
+                                document.getElementById("opt" + casas[i]).setAttribute("checked", "");
+                            }
+                        }
+                        else
+                        {
+                            if(document.getElementById("opt" + casas[i]).hasAttribute("checked"))
+                            {
+                                document.getElementById("opt" + casas[i]).removeAttribute("checked");
+                            }
+                        }
+                    }
+                }
+                break;
+                
                 case "traidor":
+                    if(typeof datos == "object")
+                    {
+                        document.getElementById("chkTraidor").checked = (datos[atributo] == "Si");
+                    }
+                    else
+                    {
+                        document.getElementById("chkTraidor").checked = false;
+                    }
                     break;
-
+                    
                 default:
-                    document.getElementById("txt" + atributoCapitalizado).value = "";
+                    if(typeof datos == "object")
+                    {
+                        document.getElementById("txt" + atributoCapitalizado).value = datos[atributo];
+                    }
+                    else
+                    {
+                        document.getElementById("txt" + atributoCapitalizado).value = "";
+                    }
                     break;
-            }
         }
     }
 }
