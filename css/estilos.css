@@ -102,6 +102,13 @@ input[type=button]
   margin: 5px;
 }
 
+.grupoInterno
+{
+  margin-top: 15px;
+  margin-bottom: 15px;
+  margin-right: 1200px;
+}
+
 #btnAgregar
 {
   background-color: #4CAF50;

@@ -2,6 +2,7 @@ addEventListener("load", asignarManejadores, false);
 
 var personajes = [];
 var personajeSeleccionado = {};
+var casas = ["Stark", "Targaryen", "Lannister"];
 
 //Al dispararse el evento load cuando se termina de cargar la página web, 
 //se instancian los manejadores del evento click de los tres botones del menú.
@@ -289,7 +290,7 @@ function crearTabla()
 
     if(typeof personajes[0] != "object") //Si el servidor no trae nada creo la estructura vacía.
     {
-        personajes[0] = {"id":null,"nombre":null,"apellido":null,"edad":null,"casa":null,"es traidor":null};
+        personajes[0] = {"id":null,"nombre":null,"apellido":null,"edad":null,"casa":null,"traidor":null};
         puedeCrearDetalle = false;
     }
 
@@ -310,7 +311,6 @@ function crearFormulario()
     var formulario = document.createElement("form");
     var grupo = document.createElement("fieldset");
     var leyenda = document.createElement("legend");
-    //var tablaFormulario = document.createElement("table");
     var botonAgregar = document.createElement("input");
     var botonModificar = document.createElement("input");
     var botonBorrar = document.createElement("input");
@@ -325,39 +325,87 @@ function crearFormulario()
     formulario.appendChild(grupo);
 
     grupo.appendChild(leyenda);
-    //grupo.appendChild(tablaFormulario);
 
     leyenda.textContent = "Personaje";
 
     for(var atributo in personajes[0])
     {
-        //var fila = document.createElement("tr");
-        //var columnaEtiqueta = document.createElement("td");
-        //var columnaTexto = document.createElement("td");
-        var etiqueta = document.createElement("label");
-        var atributoCapitalizado = atributo.charAt(0).toUpperCase() + atributo.slice(1).toLowerCase(); //Primer letra en mayuscula, resto minuscula
-        var cuadroTexto = document.createElement("input");
-
-        //tablaFormulario.appendChild(fila);
-
-        //fila.appendChild(columnaEtiqueta);
-        //fila.appendChild(columnaTexto);
-
-        etiqueta.setAttribute("for", "txt" + atributoCapitalizado);
-        etiqueta.textContent = atributoCapitalizado + ": ";
-
-        cuadroTexto.setAttribute("type", "text");
-        cuadroTexto.setAttribute("id", "txt" + atributoCapitalizado);
-        if(atributo === "id")
+        switch(atributo)
         {
-            cuadroTexto.setAttribute("readonly", "");
+            case "casa":
+                var grupoCasa = document.createElement("fieldset");
+                var leyendaCasa = document.createElement("legend");
+
+                grupo.appendChild(grupoCasa);
+                grupoCasa.appendChild(leyendaCasa);
+                grupoCasa.setAttribute("class", "grupoInterno");
+                leyendaCasa.textContent = "Casa";
+
+                for(var i = 0; i < casas.length; i++)
+                {
+                    var etiquetaCasa = document.createElement("label");
+                    var optButton = document.createElement("input");
+
+                    etiquetaCasa.setAttribute("for", "opt" + casas[i]);
+                    etiquetaCasa.textContent = casas[i];
+
+                    optButton.setAttribute("type", "radio");
+                    optButton.setAttribute("id", "opt" + casas[i]);
+                    optButton.setAttribute("name", "casa");
+                    optButton.setAttribute("value", casas[i]);
+                    optButton.textContent = " " + casas[i];
+
+                    grupoCasa.appendChild(optButton);
+                    grupoCasa.appendChild(etiquetaCasa);
+                    grupoCasa.appendChild(document.createElement("br"));
+                }
+
+                break;
+
+            case "traidor":
+                var grupoTraidor = document.createElement("fieldset");
+                var chkTraidor = document.createElement("input");
+                var etiquetaTraidor = document.createElement("label");
+
+                grupoTraidor.setAttribute("class", "grupoInterno");
+
+                grupo.appendChild(grupoTraidor);
+
+                chkTraidor.setAttribute("type", "checkbox");
+                chkTraidor.setAttribute("id", "chkTraidor");
+                chkTraidor.setAttribute("name", "traidor");
+                chkTraidor.setAttribute("value", "traidor");
+                chkTraidor.textContent = "Es Traidor";
+
+                etiquetaTraidor.setAttribute("for", "chkTraidor");
+                etiquetaTraidor.textContent = "Es Traidor";
+
+                grupoTraidor.appendChild(etiquetaTraidor);
+                grupoTraidor.appendChild(chkTraidor);
+    
+                break;
+
+            default:
+                var cuadroTexto = document.createElement("input");
+                var etiqueta = document.createElement("label");
+                var atributoCapitalizado = atributo.charAt(0).toUpperCase() + atributo.slice(1).toLowerCase(); //Primer letra en mayuscula, resto minuscula
+        
+                etiqueta.setAttribute("for", "txt" + atributoCapitalizado);
+                etiqueta.textContent = atributoCapitalizado + ": ";
+                        
+                cuadroTexto.setAttribute("type", "text");
+                cuadroTexto.setAttribute("id", "txt" + atributoCapitalizado);
+
+                if(atributo === "id")
+                {
+                    cuadroTexto.setAttribute("readonly", "");
+                }
+                
+                grupo.appendChild(etiqueta);
+                grupo.appendChild(cuadroTexto);
+
+                break;
         }
-
-        //columnaEtiqueta.appendChild(etiqueta);
-        grupo.appendChild(etiqueta);
-
-        //columnaTexto.appendChild(cuadroTexto);
-        grupo.appendChild(cuadroTexto);
     }
 
     botonAgregar.setAttribute("type", "button");
@@ -542,7 +590,19 @@ function mostrarFormulario()
         }
         else
         {
-            document.getElementById("txt" + atributoCapitalizado).value = "";
+            switch(atributo)
+            {
+                case "casa":
+                    document.getElementById("opt" + casas[0]).setAttribute("checked", "");
+                    break;
+
+                case "traidor":
+                    break;
+
+                default:
+                    document.getElementById("txt" + atributoCapitalizado).value = "";
+                    break;
+            }
         }
     }
 }
