@@ -45,7 +45,7 @@
 /*-------------------------------------------------------------*/
 /************** Estilos de la tabla de personas ****************/
 
-.tablaPersonas
+.tablaPersonajes
 {
   border-collapse: collapse;
   border-spacing: 0;
@@ -53,30 +53,30 @@
   border: 1px solid #ddd;
 }
 
-.tablaPersonas th, td
+.tablaPersonajes th, td
 {
   text-align: left;
   padding: 16px;
 }
 
-.tablaPersonas th
+.tablaPersonajes th
 {
   text-decoration: underline;
   font-style: italic;
 }
 
-.tablaPersonas tr:nth-child(even)
+.tablaPersonajes tr:nth-child(even)
 {
   background-color: #f2f2f2
 }
 
-.tablaPersonas tr:hover
+.tablaPersonajes tr:hover
 {
   font-weight: bold;
 }
 
 /*-------------------------------------------------------------*/
-/************ Estilos del formulario de personas ***************/
+/************ Estilos del formulario de personajes ***************/
 
 /* Style inputs with type="text", select elements and textareas */
 input[type=text], select, textarea
