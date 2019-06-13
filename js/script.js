@@ -199,13 +199,13 @@ function borrarPersonaje(personaje)
 }
 
 //Llamador usado por el evento dla opción de Modificar del formulario
-function opcionModificarPersona()
+function opcionModificarPersonaje()
 {
-    modificarPersona(personajeSeleccionado, personajeEditado());
+    modificarPersonaje(personajeSeleccionado, personajeEditado());
 }
 
-//Llama a la función modificarPersona del servidor, pasándole el objeto que se quiere modificar por parámetro.
-function modificarPersona(personaPre, personaPost)
+//Llama a la función modificarPersonaje del servidor, pasándole el objeto que se quiere modificar por parámetro.
+function modificarPersonaje(personaPre, personaPost)
 {
     var xhr = new XMLHttpRequest();
     var spinner = crearSpinner();
@@ -244,7 +244,7 @@ function modificarPersona(personaPre, personaPost)
 
     };
 
-    xhr.open('POST', 'http://localhost:3000/modificarPersona', true); //abre la conexion( metodo , URL, que sea asincronico y no se quede esperando el retorno)
+    xhr.open('POST', 'http://localhost:3000/modificarPersonaje', true); //abre la conexion( metodo , URL, que sea asincronico y no se quede esperando el retorno)
     xhr.setRequestHeader('Content-type', 'application/json');
     xhr.send(JSON.stringify(personaPost));
 
@@ -363,12 +363,12 @@ function crearFormulario()
     botonAgregar.setAttribute("type", "button");
     botonAgregar.setAttribute("id", "btnAgregar");
     botonAgregar.value = "Agregar";
-    botonAgregar.addEventListener("click", opcionAgregarPersona, false);
+    botonAgregar.addEventListener("click", opcionAgregarPersonaje, false);
 
     botonModificar.setAttribute("type", "button");
     botonModificar.setAttribute("id", "btnModificar");
     botonModificar.value = "Modificar";
-    botonModificar.addEventListener("click", opcionModificarPersona, false);
+    botonModificar.addEventListener("click", opcionModificarPersonaje, false);
 
     botonBorrar.setAttribute("type", "button");
     botonBorrar.setAttribute("id", "btnBorrar");
